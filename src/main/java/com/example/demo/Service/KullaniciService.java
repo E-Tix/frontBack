@@ -84,7 +84,7 @@ public class KullaniciService {
 
         for (BiletEntity b:kullaniciyaAitBiletler)
         {
-            if (!b.isIptalEdildiMi()||!kullaniciBiletRepository.findByBilet(b).getBilet().isIptalEdildiMi())
+            if (!b.isIptalEdildiMi()||!kullaniciBiletRepository.findByBilet_BiletID(b.getBiletID()).isIptalIstendiMi())
             {
                 seansKoltukBilet=seansKoltukBiletRepository.findSeansKoltukBiletEntityByBilet(b);
                 etkinlikSalonSeans=etkinlikSalonSeansRepository.findEtkinlikSalonSeansEntityBySeans(seansKoltukBilet.getSeans());

@@ -33,6 +33,8 @@ public interface KullaniciBiletRepository extends JpaRepository<KullaniciBiletEn
     @Query("SELECT kb FROM KullaniciBiletEntity kb WHERE kb.iptalIstendiMi = true")
     List<KullaniciBiletEntity> findAllIptalIstendi();
 
+    KullaniciBiletEntity findByBilet_BiletID(Long biletId);
+
     List<KullaniciBiletEntity> findByIptalIstendiMiTrue();
 
     //KullaniciBiletEntity findKullaniciBiletEntityByKullaniciAndBilet(Long kullaniciId, BiletEntity bilet);

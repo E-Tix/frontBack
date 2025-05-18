@@ -71,6 +71,10 @@ public class AdminLandingService {
             BiletEntity bilet = optionalBilet.get();
 
             bilet.setIptalEdildiMi(true);
+            SeansKoltukBiletEntity seansKoltukBilet=seansKoltukBiletRepository.findSeansKoltukBiletEntityByBilet(bilet);
+            seansKoltukBilet.setKoltukdurumu(false);
+            seansKoltukBilet.setBilet(null);
+            seansKoltukBiletRepository.save(seansKoltukBilet);
             biletRepository.save(bilet);
             return true;
         }
