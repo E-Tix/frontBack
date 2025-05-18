@@ -80,7 +80,7 @@ public class SalonDataInitializer implements CommandLineRunner {
             for (SalonBilgisi s:salonlar)
             {
                 salon1=salonRepository.save(new SalonEntity(sehirEntity,s.ad,s.adres));
-                for (int j=1;j<=10;j++)
+                for (int j=1;j<=39;j++)
                 {
                     koltukRepository.save(new KoltukEntity(salon1,j));
                 }
