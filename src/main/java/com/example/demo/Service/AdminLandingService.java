@@ -34,27 +34,31 @@ public class AdminLandingService {
         List<SilinecekBiletDto> silinecekBiletDtoList = new ArrayList<>();
         List<KullaniciBiletEntity> kullaniciBiletEntityList = kullaniciBiletRepository.findByIptalIstendiMiTrue();
 
+
         SeansKoltukBiletEntity seansKoltukBilet;
         EtkinlikSalonSeansEntity etkinlikSalonSeans;
 
         for(KullaniciBiletEntity kb:kullaniciBiletEntityList)
         {
-            seansKoltukBilet=seansKoltukBiletRepository.findSeansKoltukBiletEntityByBilet(kb.getBilet());
-            etkinlikSalonSeans=etkinlikSalonSeansRepository.findEtkinlikSalonSeansEntityBySeans(seansKoltukBilet.getSeans());
+            if (!kb.getBilet().isIptalEdildiMi())
+            {
+                seansKoltukBilet=seansKoltukBiletRepository.findSeansKoltukBiletEntityByBilet(kb.getBilet());
+                etkinlikSalonSeans=etkinlikSalonSeansRepository.findEtkinlikSalonSeansEntityBySeans(seansKoltukBilet.getSeans());
 
-            silinecekBiletDtoList.add(new SilinecekBiletDto(
-                    new KullaniciDtoForSilinecekBiletDto(kb.getKullanici().getKullaniciAdi(),kb.getKullanici().getEmail()),
-                    new BiletDto(
-                            kb.getBilet().getBiletID(),
-                            kb.getBilet().getOdenenMiktar(),
-                            seansKoltukBilet.getKoltuk().getKoltukNumarasi(),
-                            etkinlikSalonSeans.getEtkinlik().getEtkinlikAdi(),
-                            new SehirDto(etkinlikSalonSeans.getEtkinlik().getSehir().getPlakaKodu(),etkinlikSalonSeans.getEtkinlik().getSehir().getSehirAdi()),
-                            new SalonDto(etkinlikSalonSeans.getSalon().getSalonID(),etkinlikSalonSeans.getSalon().getSalonAdi(),etkinlikSalonSeans.getSalon().getAdres()),
-                            etkinlikSalonSeans.getSeans()
-                    )
-            ));
-        }
+                silinecekBiletDtoList.add(new SilinecekBiletDto(
+                        new KullaniciDtoForSilinecekBiletDto(kb.getKullanici().getKullaniciAdi(),kb.getKullanici().getEmail()),
+                        new BiletDto(
+                                kb.getBilet().getBiletID(),
+                                kb.getBilet().getOdenenMiktar(),
+                                seansKoltukBilet.getKoltuk().getKoltukNumarasi(),
+                                etkinlikSalonSeans.getEtkinlik().getEtkinlikAdi(),
+                                new SehirDto(etkinlikSalonSeans.getEtkinlik().getSehir().getPlakaKodu(),etkinlikSalonSeans.getEtkinlik().getSehir().getSehirAdi()),
+                                new SalonDto(etkinlikSalonSeans.getSalon().getSalonID(),etkinlikSalonSeans.getSalon().getSalonAdi(),etkinlikSalonSeans.getSalon().getAdres()),
+                                etkinlikSalonSeans.getSeans()
+                        )
+                ));
+            }
+            }
 
         return silinecekBiletDtoList;
 
@@ -66,21 +70,8 @@ public class AdminLandingService {
         if (optionalBilet.isPresent()) {
             BiletEntity bilet = optionalBilet.get();
 
-            KullaniciBiletEntity kullaniciBiletEntity = kullaniciBiletRepository.findByBilet(bilet);
-            if (kullaniciBiletEntity != null) {
-                kullaniciBiletEntity = kullaniciBiletRepository.saveAndFlush(kullaniciBiletEntity);
-                kullaniciBiletRepository.delete(kullaniciBiletEntity);
-            }
-
-            SeansKoltukBiletEntity seansKoltukBiletEntity = seansKoltukBiletRepository.findSeansKoltukBiletEntityByBilet(bilet);
-            if (seansKoltukBiletEntity != null) {
-                seansKoltukBiletEntity.setKoltukdurumu(false);
-                seansKoltukBiletEntity.setBilet(null);
-                seansKoltukBiletRepository.save(seansKoltukBiletEntity);
-            }
-
-            biletRepository.delete(bilet);
-
+            bilet.setIptalEdildiMi(true);
+            biletRepository.save(bilet);
             return true;
         }
 

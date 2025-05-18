@@ -84,19 +84,21 @@ public class KullaniciService {
 
         for (BiletEntity b:kullaniciyaAitBiletler)
         {
-            seansKoltukBilet=seansKoltukBiletRepository.findSeansKoltukBiletEntityByBilet(b);
-            etkinlikSalonSeans=etkinlikSalonSeansRepository.findEtkinlikSalonSeansEntityBySeans(seansKoltukBilet.getSeans());
+            if (!b.isIptalEdildiMi()||!kullaniciBiletRepository.findByBilet(b).getBilet().isIptalEdildiMi())
+            {
+                seansKoltukBilet=seansKoltukBiletRepository.findSeansKoltukBiletEntityByBilet(b);
+                etkinlikSalonSeans=etkinlikSalonSeansRepository.findEtkinlikSalonSeansEntityBySeans(seansKoltukBilet.getSeans());
 
-            biletDtoList.add(new BiletDto(
-                    b.getBiletID(),
-                    b.getOdenenMiktar(),
-                    seansKoltukBilet.getKoltuk().getKoltukNumarasi(),
-                    etkinlikSalonSeans.getEtkinlik().getEtkinlikAdi(),
-                    new SehirDto(etkinlikSalonSeans.getEtkinlik().getSehir().getPlakaKodu(),etkinlikSalonSeans.getEtkinlik().getSehir().getSehirAdi()),
-                    new SalonDto(etkinlikSalonSeans.getSalon().getSalonID(),etkinlikSalonSeans.getSalon().getSalonAdi(),etkinlikSalonSeans.getSalon().getAdres()),
-                    etkinlikSalonSeans.getSeans()
-            ));
-
+                biletDtoList.add(new BiletDto(
+                        b.getBiletID(),
+                        b.getOdenenMiktar(),
+                        seansKoltukBilet.getKoltuk().getKoltukNumarasi(),
+                        etkinlikSalonSeans.getEtkinlik().getEtkinlikAdi(),
+                        new SehirDto(etkinlikSalonSeans.getEtkinlik().getSehir().getPlakaKodu(),etkinlikSalonSeans.getEtkinlik().getSehir().getSehirAdi()),
+                        new SalonDto(etkinlikSalonSeans.getSalon().getSalonID(),etkinlikSalonSeans.getSalon().getSalonAdi(),etkinlikSalonSeans.getSalon().getAdres()),
+                        etkinlikSalonSeans.getSeans()
+                ));
+            }
         }
 
         return biletDtoList;
