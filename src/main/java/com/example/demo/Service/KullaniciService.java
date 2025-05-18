@@ -8,6 +8,8 @@ import com.example.demo.Dto.Response.SehirDto;
 import com.example.demo.Entity.*;
 import com.example.demo.Repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,12 +23,14 @@ public class KullaniciService {
 
     private final KullaniciRepository kullaniciRepository;
     private final BiletRepository biletRepository;
+    private final SehirRepository sehirRepository;
     private final EtkinlikSalonSeansRepository etkinlikSalonSeansRepository;
     private final KullaniciBiletRepository kullaniciBiletRepository;
     private final SeansKoltukBiletRepository seansKoltukBiletRepository;
 
     @Autowired
-    public KullaniciService(EtkinlikSalonSeansRepository etkinlikSalonSeansRepository,SeansKoltukBiletRepository seansKoltukBiletRepository,KullaniciRepository kullaniciRepository,BiletRepository biletRepository,KullaniciBiletRepository kullaniciBiletRepository){
+    public KullaniciService(SehirRepository sehirRepository,EtkinlikSalonSeansRepository etkinlikSalonSeansRepository,SeansKoltukBiletRepository seansKoltukBiletRepository,KullaniciRepository kullaniciRepository,BiletRepository biletRepository,KullaniciBiletRepository kullaniciBiletRepository){
+        this.sehirRepository=sehirRepository;
         this.etkinlikSalonSeansRepository=etkinlikSalonSeansRepository;
         this.seansKoltukBiletRepository=seansKoltukBiletRepository;
         this.kullaniciRepository=kullaniciRepository;
@@ -127,9 +131,10 @@ public class KullaniciService {
         }
     }
 
+    @Transactional
     public boolean kullaniciSehirDuzenle(Long userId, SehirDto sehirDto){
         KullaniciEntity kullanici = kullaniciRepository.findByKullaniciID(userId);
-        kullanici.setSehir(new SehirEntity(sehirDto.getPlakaKodu(), sehirDto.getSehirAdi()));
+        kullanici.setSehir(sehirRepository.findByPlakaKodu(sehirDto.getPlakaKodu()));
         kullaniciRepository.save(kullanici);
         return true;
     }

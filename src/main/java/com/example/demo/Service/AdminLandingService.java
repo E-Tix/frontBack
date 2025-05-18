@@ -6,6 +6,7 @@ import com.example.demo.Repository.BiletRepository;
 import com.example.demo.Repository.EtkinlikSalonSeansRepository;
 import com.example.demo.Repository.KullaniciBiletRepository;
 import com.example.demo.Repository.SeansKoltukBiletRepository;
+import jakarta.persistence.Transient;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,27 +60,30 @@ public class AdminLandingService {
 
     }
 
-    public boolean biletSil(Long biletId)
-    {
+    public boolean biletSil(Long biletId) {
         Optional<BiletEntity> optionalBilet = biletRepository.findByBiletID(biletId);
 
-        if (optionalBilet.isPresent())
-        {
+        if (optionalBilet.isPresent()) {
             BiletEntity bilet = optionalBilet.get();
 
             KullaniciBiletEntity kullaniciBiletEntity = kullaniciBiletRepository.findByBilet(bilet);
-            kullaniciBiletRepository.delete(kullaniciBiletEntity);
+            if (kullaniciBiletEntity != null) {
+                kullaniciBiletEntity = kullaniciBiletRepository.saveAndFlush(kullaniciBiletEntity);
+                kullaniciBiletRepository.delete(kullaniciBiletEntity);
+            }
 
             SeansKoltukBiletEntity seansKoltukBiletEntity = seansKoltukBiletRepository.findSeansKoltukBiletEntityByBilet(bilet);
-
-            seansKoltukBiletEntity.setKoltukdurumu(false);
-            seansKoltukBiletEntity.setBilet(null);
-            seansKoltukBiletRepository.save(seansKoltukBiletEntity);
+            if (seansKoltukBiletEntity != null) {
+                seansKoltukBiletEntity.setKoltukdurumu(false);
+                seansKoltukBiletEntity.setBilet(null);
+                seansKoltukBiletRepository.save(seansKoltukBiletEntity);
+            }
 
             biletRepository.delete(bilet);
 
             return true;
         }
+
         return false;
     }
 }
