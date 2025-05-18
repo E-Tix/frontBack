@@ -5,7 +5,10 @@ import com.example.demo.Dto.Response.AdminProfiliDto;
 import com.example.demo.Repository.AdminRepository;
 import com.example.demo.Service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -24,17 +27,27 @@ public class AdminController {
     }
 
     @PutMapping("/changePassword")
-    public boolean sifreDegistir(@RequestBody ChangePasswordDto changePasswordDto)
-    {
+    public ResponseEntity<Boolean> sifreDegistir(@RequestBody ChangePasswordDto changePasswordDto) {
+        checkRole("ADMIN");
         Long adminId = getCurrentAdminId();
-        return adminService.sifreDegistir(adminId, changePasswordDto);
+        boolean success = adminService.sifreDegistir(adminId, changePasswordDto);
+        if (success) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.badRequest().body(false);
+        }
     }
 
     @GetMapping("/getAdminProfile")
-    public AdminProfiliDto getAdminProfili()
-    {
+    public ResponseEntity<AdminProfiliDto> getAdminProfili() {
+        checkRole("ADMIN");
         Long adminId = getCurrentAdminId();
-        return adminService.getAdminProfili(adminId);
+        AdminProfiliDto dto = adminService.getAdminProfili(adminId);
+        if (dto != null) {
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     private Long getCurrentAdminId() {
@@ -48,6 +61,15 @@ public class AdminController {
         return adminRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Admin bulunamadı"))
                 .getAdminID();
+    }
+
+    protected void checkRole(String requiredRole) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .noneMatch(r -> r.equals(requiredRole))) {
+            throw new AccessDeniedException("Gereken yetki: " + requiredRole);
+        }
     }
 
 }

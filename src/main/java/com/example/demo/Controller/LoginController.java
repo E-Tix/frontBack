@@ -5,6 +5,7 @@ import com.example.demo.Dto.Request.LoginDto;
 import com.example.demo.Dto.Request.OrgLoginDto;
 import com.example.demo.Service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,18 +23,33 @@ public class LoginController {
 
     //JWT token döndür
     @PostMapping("/user")
-    public String login(@RequestBody LoginDto loginDto)
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto)
     {
-        return loginService.login(loginDto);
+        String token = loginService.login(loginDto);
+        if (token != null){
+            return ResponseEntity.ok(token);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/organizator")
-    public String login(@RequestBody OrgLoginDto orgLoginDto){
-        return loginService.login(orgLoginDto);
+    public ResponseEntity<String> login(@RequestBody OrgLoginDto orgLoginDto){
+        String token = loginService.login(orgLoginDto);
+        if (token != null){
+            return ResponseEntity.ok(token);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/admin")
-    public String login(@RequestBody AdminLoginDto adminLoginDto){
-        return loginService.login(adminLoginDto);
+    public ResponseEntity<String> login(@RequestBody AdminLoginDto adminLoginDto){
+        String token = loginService.login(adminLoginDto);
+        if (token != null){
+            return ResponseEntity.ok(token);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 }

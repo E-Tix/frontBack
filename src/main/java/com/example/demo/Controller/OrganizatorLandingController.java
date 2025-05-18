@@ -9,6 +9,7 @@ import com.example.demo.Dto.Response.EtkinlikForOrgDto;
 import com.example.demo.Dto.Response.SalonDto;
 import com.example.demo.Dto.Response.SehirDto;
 import com.example.demo.Dto.Response.*;
+import com.example.demo.Entity.EtkinlikEntity;
 import com.example.demo.Repository.OrganizatorRepository;
 import com.example.demo.Service.OrganizatorLandingService;
 import com.example.demo.Service.SinemaService;
@@ -16,7 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -40,24 +44,41 @@ public class OrganizatorLandingController {
     }
 
     @PostMapping("/addEvent/save")
-    public boolean etkinlikEkle(@RequestBody EtkinlikEkleDto etkinlikEkleDto){
+    public ResponseEntity<Boolean> etkinlikEkle(@RequestBody EtkinlikEkleDto etkinlikEkleDto){
+        checkRole("ROLE_ORGANIZATOR");
         //orgid changePassworddaki gibi alınacak
         Long id = getCurrentOrganizatorId();
         System.out.println("id" + id);
-        organizatorLandingService.etkinlikEkle(etkinlikEkleDto,id);
-        return true;
+        EtkinlikEntity etkinlikEntitylik = organizatorLandingService.etkinlikEkle(etkinlikEkleDto,id);
+        if (etkinlikEntitylik != null){
+            return ResponseEntity.ok(true);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/getSalonsForSehir")
-    public List<SalonDto> getSalonsForSehir(@RequestBody SehirDto sehirDto)
+    public ResponseEntity<List<SalonDto>> getSalonsForSehir(@RequestBody SehirDto sehirDto)
     {
-        return organizatorLandingService.getSalonsForSehir(sehirDto);
+        checkRole("ROLE_ORGANIZATOR");
+        List<SalonDto> salonDtos = organizatorLandingService.getSalonsForSehir(sehirDto);
+        if (salonDtos != null){
+            return ResponseEntity.ok(salonDtos);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/getSehirs")
-    public List<SehirDto> getSehirs()
+    public ResponseEntity<List<SehirDto>> getSehirs()
     {
-        return organizatorLandingService.getSehirs();
+        checkRole("ROLE_ORGANIZATOR");
+        List<SehirDto> sehirDtos = organizatorLandingService.getSehirs();
+        if (sehirDtos != null){
+            return ResponseEntity.ok(sehirDtos);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /*@GetMapping("/addEvent")
@@ -66,76 +87,132 @@ public class OrganizatorLandingController {
     }*/
 
     @GetMapping("/updateEvent/{eventId}")
-    public EtkinlikGuncelleDto getEtkinlikGuncelle(@PathVariable Long eventId){
+    public ResponseEntity<EtkinlikGuncelleDto> getEtkinlikGuncelle(@PathVariable Long eventId){
+        checkRole("ROLE_ORGANIZATOR");
         Long id = getCurrentOrganizatorId();
-        return organizatorLandingService.getEtkinlikGuncelleDto(id,eventId);
-
+        EtkinlikGuncelleDto etkinlikGuncelleDto = organizatorLandingService.getEtkinlikGuncelleDto(id,eventId);
+        if (etkinlikGuncelleDto != null){
+            return ResponseEntity.ok(etkinlikGuncelleDto);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/updateEvent/save")
-    public boolean etkinlikGuncelle(@RequestBody EtkinlikGuncelleDto etkinlikGuncelleDto){
+    public ResponseEntity<Boolean> etkinlikGuncelle(@RequestBody EtkinlikGuncelleDto etkinlikGuncelleDto){
         Long id = getCurrentOrganizatorId();
-        organizatorLandingService.etkinlikGuncelle(id,etkinlikGuncelleDto);
-        return true;
-
+        EtkinlikEntity etkinlikEntity= organizatorLandingService.etkinlikGuncelle(id,etkinlikGuncelleDto);
+        if (etkinlikEntity != null){
+            return ResponseEntity.ok(true);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/deleteEvent/{eventId}")
-    public boolean etkinlikSil(@PathVariable Long eventId)//pathten id alma dtodan al
+    public ResponseEntity<Boolean> etkinlikSil(@PathVariable Long eventId)//pathten id alma dtodan al
     {
-        return organizatorLandingService.etkinlikSil(eventId);
+        checkRole("ROLE_ORGANIZATOR");
+        boolean success = organizatorLandingService.etkinlikSil(eventId);
+        if (success){
+            return ResponseEntity.ok(true);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/getEtkinlik/{eventId}")
-    public EtkinlikForOrgDetayDto getEtkinlik(@PathVariable Long eventId)
+    public ResponseEntity<EtkinlikForOrgDetayDto> getEtkinlik(@PathVariable Long eventId)
     {
+        checkRole("ROLE_ORGANIZATOR");
         Long orgId = getCurrentOrganizatorId();
-        return organizatorLandingService.getEtkinlik(eventId);
+        EtkinlikForOrgDetayDto etkinlikForOrgDetayDto = organizatorLandingService.getEtkinlik(eventId);
+        if (etkinlikForOrgDetayDto != null){
+            return ResponseEntity.ok(etkinlikForOrgDetayDto);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/")
-    public Page<EtkinlikForOrgDto> getEtkinlikler(
+    public ResponseEntity<Page<EtkinlikForOrgDto>> getEtkinlikler(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size)
     {
+        checkRole("ROLE_ORGANIZATOR");
         Long orgId = getCurrentOrganizatorId();
-        return organizatorLandingService.getEtkinlikler(orgId, page, size);
+        Page<EtkinlikForOrgDto> etkinlikForOrgDtos = organizatorLandingService.getEtkinlikler(orgId, page, size);
+        if (etkinlikForOrgDtos != null){
+            return ResponseEntity.ok(etkinlikForOrgDtos);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/addCinema/save")
-    public boolean sinemaEkle(@RequestBody SinemaEkleDto sinemaEkleDto)
+    public ResponseEntity<Boolean> sinemaEkle(@RequestBody SinemaEkleDto sinemaEkleDto)
     {
+        checkRole("ROLE_ORGANIZATOR");
         Long orgId = getCurrentOrganizatorId();
-        return sinemaService.sinemaEkle(orgId,sinemaEkleDto);
+        boolean success = sinemaService.sinemaEkle(orgId,sinemaEkleDto);
+        if (success){
+            return ResponseEntity.ok(true);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/deleteCinema")
-    public boolean sinemaSil(@RequestParam Long sinemaId)
+    public ResponseEntity<Boolean> sinemaSil(@RequestParam Long sinemaId)
     {
+        checkRole("ROLE_ORGANIZATOR");
         Long orgId = getCurrentOrganizatorId();
-        return sinemaService.sinemaSil(orgId,sinemaId);
+        boolean success = sinemaService.sinemaSil(orgId,sinemaId);
+        if (success){
+            return ResponseEntity.ok(true);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     //sinema güncelleme formunun doldurulması için.
     @GetMapping("/updateCinema")
-    public SinemaGuncelleDto getSinemaGuncelleDto(@RequestParam Long sinemaId)
+    public ResponseEntity<SinemaGuncelleDto> getSinemaGuncelleDto(@RequestParam Long sinemaId)
     {
+        checkRole("ROLE_ORGANIZATOR");
         Long orgId = getCurrentOrganizatorId();
-        return sinemaService.getSinemaGuncelleDto(orgId,sinemaId);
+        SinemaGuncelleDto sinemaGuncelleDto = sinemaService.getSinemaGuncelleDto(orgId,sinemaId);
+        if (sinemaGuncelleDto != null){
+            return ResponseEntity.ok(sinemaGuncelleDto);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("updateCinema/save")
-    public boolean sinemaGuncelle(@RequestBody SinemaGuncelleDto sinemaGuncelleDto)
+    public ResponseEntity<Boolean> sinemaGuncelle(@RequestBody SinemaGuncelleDto sinemaGuncelleDto)
     {
+        checkRole("ROLE_ORGANIZATOR");
         Long orgId = getCurrentOrganizatorId();
-        return sinemaService.sinemaGuncelle(orgId,sinemaGuncelleDto);
+        boolean success = sinemaService.sinemaGuncelle(orgId,sinemaGuncelleDto);
+        if (success){
+            return ResponseEntity.ok(true);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/getCinema")
-    public SinemaForOrgDetayDto getSinema(@RequestParam Long sinemaId)
+    public ResponseEntity<SinemaForOrgDetayDto> getSinema(@RequestParam Long sinemaId)
     {
+        checkRole("ROLE_ORGANIZATOR");
         Long orgId = getCurrentOrganizatorId();
-        return sinemaService.getSinema(orgId,sinemaId);
+        SinemaForOrgDetayDto sinemaForOrgDetayDto = sinemaService.getSinema(orgId,sinemaId);
+        if (sinemaForOrgDetayDto != null){
+            return ResponseEntity.ok(sinemaForOrgDetayDto);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     private Long getCurrentOrganizatorId() {
@@ -154,4 +231,13 @@ public class OrganizatorLandingController {
                 .orElseThrow(() -> new UsernameNotFoundException("Organizatör bulunamadı"))
                 .getOrganizatorID();
     }
+    protected void checkRole(String requiredRole) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .noneMatch(r -> r.equals(requiredRole))) {
+            throw new AccessDeniedException("Gereken yetki: " + requiredRole);
+        }
+    }
+
 }

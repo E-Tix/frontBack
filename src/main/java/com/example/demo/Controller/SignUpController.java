@@ -4,6 +4,7 @@ import com.example.demo.Dto.Request.OrgSignUpDto;
 import com.example.demo.Dto.Request.SignUpDto;
 import com.example.demo.Service.SignUpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,14 +24,24 @@ public class SignUpController {
 
 
     @PostMapping("/kullanici")
-    public String signUp(@RequestBody SignUpDto signUpDto)
+    public ResponseEntity<String> signUp(@RequestBody SignUpDto signUpDto)
     {
-        return signUpService.signUp(signUpDto);
+        String token = signUpService.signUp(signUpDto);
+        if (token != null){
+            return ResponseEntity.ok(token);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/organizator")
-    public String signUp(@RequestBody OrgSignUpDto orgSignUpDto)
+    public ResponseEntity<String> signUp(@RequestBody OrgSignUpDto orgSignUpDto)
     {
-        return signUpService.signUp(orgSignUpDto);
+        String token = signUpService.signUp(orgSignUpDto);
+        if (token != null){
+            return ResponseEntity.ok(token);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
