@@ -100,6 +100,7 @@ public class OrganizatorLandingController {
 
     @PutMapping("/updateEvent/save")
     public ResponseEntity<Boolean> etkinlikGuncelle(@RequestBody EtkinlikGuncelleDto etkinlikGuncelleDto){
+        checkRole("ROLE_ORGANIZATOR");
         Long id = getCurrentOrganizatorId();
         EtkinlikEntity etkinlikEntity= organizatorLandingService.etkinlikGuncelle(id,etkinlikGuncelleDto);
         if (etkinlikEntity != null){
