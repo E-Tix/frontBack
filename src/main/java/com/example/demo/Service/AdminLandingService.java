@@ -1,9 +1,6 @@
 package com.example.demo.Service;
 
-import com.example.demo.Dto.Response.BiletDto;
-import com.example.demo.Dto.Response.SalonDto;
-import com.example.demo.Dto.Response.SehirDto;
-import com.example.demo.Dto.Response.SilinecekBiletDto;
+import com.example.demo.Dto.Response.*;
 import com.example.demo.Entity.*;
 import com.example.demo.Repository.BiletRepository;
 import com.example.demo.Repository.EtkinlikSalonSeansRepository;
@@ -45,7 +42,7 @@ public class AdminLandingService {
             etkinlikSalonSeans=etkinlikSalonSeansRepository.findEtkinlikSalonSeansEntityBySeans(seansKoltukBilet.getSeans());
 
             silinecekBiletDtoList.add(new SilinecekBiletDto(
-                    kb.getKullanici(),
+                    new KullaniciDtoForSilinecekBiletDto(kb.getKullanici().getKullaniciAdi(),kb.getKullanici().getEmail()),
                     new BiletDto(
                             kb.getBilet().getBiletID(),
                             kb.getBilet().getOdenenMiktar(),

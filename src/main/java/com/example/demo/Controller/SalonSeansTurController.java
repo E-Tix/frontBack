@@ -2,9 +2,7 @@ package com.example.demo.Controller;
 
 import com.example.demo.Repository.EtkinlikTurRepository;
 import com.example.demo.Repository.SalonRepository;
-import com.example.demo.Repository.SehirRepository;
 import com.example.demo.Entity.EtkinlikTurEntity;
-import com.example.demo.Entity.SehirEntity;
 import com.example.demo.Entity.SalonEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +18,15 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class SalonSeansTurController {
 
-    @Autowired
-    private EtkinlikTurRepository etkinlikTurRepository;
+    private final EtkinlikTurRepository etkinlikTurRepository;
+
+    private final SalonRepository salonRepository;
 
     @Autowired
-    private SalonRepository salonRepository;
+    public SalonSeansTurController(EtkinlikTurRepository etkinlikTurRepository, SalonRepository salonRepository) {
+        this.etkinlikTurRepository = etkinlikTurRepository;
+        this.salonRepository = salonRepository;
+    }
 
     @GetMapping("/etkinlik-turleri")
     public ResponseEntity<List<EtkinlikTurEntity>> getEtkinlikTurleri() {

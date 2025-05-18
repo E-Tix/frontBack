@@ -4,23 +4,24 @@ import com.example.demo.Entity.KullaniciEntity;
 import com.example.demo.Entity.SeansEntity;
 
 public class SilinecekBiletDto {
-    private KullaniciEntity kullanici;
     private BiletDto biletDto;
 
-    public SilinecekBiletDto(KullaniciEntity kullanici, BiletDto biletDto) {
-        this.kullanici = kullanici;
+    private KullaniciDtoForSilinecekBiletDto kullaniciDtoForSilinecekBiletDto;
+
+    public SilinecekBiletDto(KullaniciDtoForSilinecekBiletDto kullaniciDtoForSilinecekBiletDto, BiletDto biletDto) {
+        this.kullaniciDtoForSilinecekBiletDto=kullaniciDtoForSilinecekBiletDto;
         this.biletDto = biletDto;
     }
 
     public SilinecekBiletDto() {
     }
 
-    public KullaniciEntity getKullanici() {
-        return kullanici;
+    public KullaniciDtoForSilinecekBiletDto getKullaniciDtoForSilinecekBiletDto() {
+        return kullaniciDtoForSilinecekBiletDto;
     }
 
-    public void setKullanici(KullaniciEntity kullanici) {
-        this.kullanici = kullanici;
+    public void setKullaniciDtoForSilinecekBiletDto(KullaniciDtoForSilinecekBiletDto kullaniciDtoForSilinecekBiletDto) {
+        this.kullaniciDtoForSilinecekBiletDto = kullaniciDtoForSilinecekBiletDto;
     }
 
     public BiletDto getBiletDto() {
