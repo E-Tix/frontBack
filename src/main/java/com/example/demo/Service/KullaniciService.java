@@ -23,13 +23,15 @@ public class KullaniciService {
 
     private final KullaniciRepository kullaniciRepository;
     private final BiletRepository biletRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final SehirRepository sehirRepository;
     private final EtkinlikSalonSeansRepository etkinlikSalonSeansRepository;
     private final KullaniciBiletRepository kullaniciBiletRepository;
     private final SeansKoltukBiletRepository seansKoltukBiletRepository;
 
     @Autowired
-    public KullaniciService(SehirRepository sehirRepository,EtkinlikSalonSeansRepository etkinlikSalonSeansRepository,SeansKoltukBiletRepository seansKoltukBiletRepository,KullaniciRepository kullaniciRepository,BiletRepository biletRepository,KullaniciBiletRepository kullaniciBiletRepository){
+    public KullaniciService(BCryptPasswordEncoder passwordEncoder, SehirRepository sehirRepository,EtkinlikSalonSeansRepository etkinlikSalonSeansRepository,SeansKoltukBiletRepository seansKoltukBiletRepository,KullaniciRepository kullaniciRepository,BiletRepository biletRepository,KullaniciBiletRepository kullaniciBiletRepository){
+        this.passwordEncoder=passwordEncoder;
         this.sehirRepository=sehirRepository;
         this.etkinlikSalonSeansRepository=etkinlikSalonSeansRepository;
         this.seansKoltukBiletRepository=seansKoltukBiletRepository;
@@ -43,9 +45,6 @@ public class KullaniciService {
         kullaniciRepository.save(kullanici);
         return true;
     }
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
 
     public boolean changePassword(ChangePasswordDto changePasswordDto, Long id) {
         KullaniciEntity kullanici = kullaniciRepository.findByKullaniciID(id);
@@ -77,7 +76,7 @@ public class KullaniciService {
     public List<BiletDto> getBiletler(Long kullaniciId)
     {
         List<BiletDto> biletDtoList = new ArrayList<>();
-        List<BiletEntity> kullaniciyaAitBiletler =kullaniciBiletRepository.findBiletlerByKullanici(kullaniciId);
+        List<BiletEntity> kullaniciyaAitBiletler = kullaniciBiletRepository.findBiletlerByKullanici(kullaniciId);
 
         SeansKoltukBiletEntity seansKoltukBilet;
         EtkinlikSalonSeansEntity etkinlikSalonSeans;

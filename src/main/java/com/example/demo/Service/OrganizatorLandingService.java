@@ -34,9 +34,11 @@ public class OrganizatorLandingService {
     private final SinemaRepository sinemaRepository;
     private final KullaniciBiletRepository kullaniciBiletRepository;
     private final BiletRepository biletRepository;
+    private final MailService mailService;
 
     @Autowired
-    public OrganizatorLandingService(BiletRepository biletRepository, KullaniciBiletRepository kullaniciBiletRepository, SeansKoltukBiletRepository seansKoltukBiletRepository,KoltukRepository koltukRepository,OrganizatorRepository organizatorRepository, EtkinlikRepository etkinlikRepository, SeansRepository seansRepository, SalonRepository salonRepository, EtkinlikSalonSeansRepository etkinlikSalonSeansRepository, SehirRepository sehirRepository, SinemaRepository sinemaRepository) {
+    public OrganizatorLandingService(MailService mailService, BiletRepository biletRepository, KullaniciBiletRepository kullaniciBiletRepository, SeansKoltukBiletRepository seansKoltukBiletRepository,KoltukRepository koltukRepository,OrganizatorRepository organizatorRepository, EtkinlikRepository etkinlikRepository, SeansRepository seansRepository, SalonRepository salonRepository, EtkinlikSalonSeansRepository etkinlikSalonSeansRepository, SehirRepository sehirRepository, SinemaRepository sinemaRepository) {
+        this.mailService = mailService;
         this.kullaniciBiletRepository=kullaniciBiletRepository;
         this.biletRepository=biletRepository;
         this.seansKoltukBiletRepository=seansKoltukBiletRepository;
@@ -133,12 +135,12 @@ public class OrganizatorLandingService {
 
         if (!etkinlik.getOrganizator().equals(organizator))
         {
-            //burada hata dönmesi gerekiyor.
             return new EtkinlikEntity();
         }
 
         List<EtkinlikSalonSeansEntity> etkinlikSalonSeansEntityList = etkinlikSalonSeansRepository.findEtkinlikSalonSeansEntitiesByEtkinlik(etkinlik);
         SalonEntity salon=etkinlikSalonSeansEntityList.getFirst().getSalon();
+        
 
         while (!etkinlikGuncelleDto.getSeansDuzenleDtoList().isEmpty())
         {
@@ -168,6 +170,7 @@ public class OrganizatorLandingService {
                 seansKoltukBiletRepository.save(new SeansKoltukBiletEntity(s,k,false));
             }
         }
+
         etkinlik.setBiletFiyati(etkinlikGuncelleDto.getBiletFiyati());
         etkinlik.setEtkinlikAdi(etkinlikGuncelleDto.getEtkinlikAdi());
         etkinlik.setEtkinlikTur(etkinlikGuncelleDto.getEtkinlikTur());
@@ -184,6 +187,7 @@ public class OrganizatorLandingService {
 
     @Transactional
     public boolean etkinlikSil(Long eventId){
+
         EtkinlikEntity etkinlik = etkinlikRepository.findByEtkinlikID(eventId);
         List<EtkinlikSalonSeansEntity> etkinlikSalonSeansEntityList = etkinlikSalonSeansRepository.findEtkinlikSalonSeansEntitiesByEtkinlik(etkinlik);
 
@@ -219,6 +223,7 @@ public class OrganizatorLandingService {
         }
 
         etkinlikRepository.delete(etkinlik);
+
         return true;
     }
 
@@ -287,14 +292,17 @@ public class OrganizatorLandingService {
     }
 
     public List<SalonDto> getSalonsForSehir(SehirDto sehirDto){
+
         SehirEntity sehir = sehirRepository.findByPlakaKodu(sehirDto.getPlakaKodu());
         List<SalonEntity> bulunanSalonlar = salonRepository.findSalonEntitiesBySehirEntity(sehir);
         List<SalonDto> salonDtoList=new ArrayList<>();
+
         while (!bulunanSalonlar.isEmpty())
         {
             salonDtoList.add(new SalonDto(bulunanSalonlar.getLast().getSalonID(), bulunanSalonlar.getLast().getSalonAdi(), bulunanSalonlar.getLast().getAdres()));
             bulunanSalonlar.removeLast();
         }
+
         return salonDtoList;
     }
 

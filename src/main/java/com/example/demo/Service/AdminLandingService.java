@@ -19,9 +19,11 @@ public class AdminLandingService {
     private final SeansKoltukBiletRepository seansKoltukBiletRepository;
     private final BiletRepository biletRepository;
     private final EtkinlikSalonSeansRepository etkinlikSalonSeansRepository;
+    private final MailService mailService;
 
-    public AdminLandingService(EtkinlikSalonSeansRepository etkinlikSalonSeansRepository, KullaniciBiletRepository kullaniciBiletRepository, SeansKoltukBiletRepository seansKoltukBiletRepository, BiletRepository biletRepository)
+    public AdminLandingService(MailService mailService,EtkinlikSalonSeansRepository etkinlikSalonSeansRepository, KullaniciBiletRepository kullaniciBiletRepository, SeansKoltukBiletRepository seansKoltukBiletRepository, BiletRepository biletRepository)
     {
+        this.mailService=mailService;
         this.etkinlikSalonSeansRepository=etkinlikSalonSeansRepository;
         this.kullaniciBiletRepository=kullaniciBiletRepository;
         this.biletRepository=biletRepository;
@@ -76,6 +78,11 @@ public class AdminLandingService {
             seansKoltukBilet.setBilet(null);
             seansKoltukBiletRepository.save(seansKoltukBilet);
             biletRepository.save(bilet);
+
+            KullaniciBiletEntity kullaniciBiletEntity=kullaniciBiletRepository.findByBilet(bilet);
+
+            mailService.biletIptaliSendMail(kullaniciBiletEntity.getKullanici().getEmail(), biletId);
+
             return true;
         }
 
