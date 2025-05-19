@@ -17,9 +17,8 @@ public class EtkinlikForOrgDetayDto {
     private int etkinlikSuresi;
     private String etkinlikAciklamasi;
     private OrganizatorEntity organizator;
-    private boolean tarihiGectiMi;
 
-    public EtkinlikForOrgDetayDto(Long etkinlikID, String etkinlikAdi, double biletFiyati, int yasSiniri, EtkinlikTurEntity etkinlikTur, List<EtkinlikSalonSeansEntity> etkinlikSalonSeansEntities, int etkinlikSuresi, String etkinlikAciklamasi, OrganizatorEntity organizator, boolean tarihiGectiMi) {
+    public EtkinlikForOrgDetayDto(Long etkinlikID, String etkinlikAdi, double biletFiyati, int yasSiniri, EtkinlikTurEntity etkinlikTur, List<EtkinlikSalonSeansEntity> etkinlikSalonSeansEntities, int etkinlikSuresi, String etkinlikAciklamasi, OrganizatorEntity organizator) {
         this.etkinlikID = etkinlikID;
         this.etkinlikAdi = etkinlikAdi;
         this.biletFiyati = biletFiyati;
@@ -29,7 +28,6 @@ public class EtkinlikForOrgDetayDto {
         this.etkinlikSuresi = etkinlikSuresi;
         this.etkinlikAciklamasi = etkinlikAciklamasi;
         this.organizator = organizator;
-        this.tarihiGectiMi = tarihiGectiMi;
     }
 
     public EtkinlikForOrgDetayDto() {
