@@ -10,12 +10,14 @@ public class EtkinlikDto {
     private String etkinlikAdi;
     private EtkinlikTurEntity etkinlikTur;
     private String kapakFotografi;
+    private boolean tarihiGectiMi;
 
-    public EtkinlikDto(Long etkinlikId, String etkinlikAdi, EtkinlikTurEntity etkinlikTur, String kapakFotografi) {
+    public EtkinlikDto(Long etkinlikId, String etkinlikAdi, EtkinlikTurEntity etkinlikTur, String kapakFotografi , boolean tarihiGectiMi) {
         this.etkinlikId = etkinlikId;
         this.etkinlikAdi = etkinlikAdi;
         this.etkinlikTur = etkinlikTur;
         this.kapakFotografi = kapakFotografi;
+        this.tarihiGectiMi = tarihiGectiMi;
     }
 
     public EtkinlikDto() {

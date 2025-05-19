@@ -1,8 +1,14 @@
 package com.example.demo.config;
 
 import java.util.concurrent.Executor;
+
+import com.example.demo.Repository.EtkinlikRepository;
+import com.example.demo.Service.EtkinlikService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -30,4 +36,5 @@ public class SchedulerConfig {
         exec.initialize();
         return exec;
     }
+
 }

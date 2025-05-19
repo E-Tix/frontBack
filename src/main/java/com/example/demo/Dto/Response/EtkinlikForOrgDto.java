@@ -13,10 +13,11 @@ public class EtkinlikForOrgDto {
     private String kapakFotografi;
     private String etkinlikTurAdi;
     private Long sinemaId;
+    private boolean tarihiGectiMi;
     //Sadece etkinlik adı ve kapak fotoğrafı vardı ancak etkinlik kartlarında gösterilemsi için
     //bu bilgilerin hepsi lazım. O nedenle ekledim
 
-    public EtkinlikForOrgDto(Long id, String etkinlikAdi, Timestamp olusturulmaTarihi, int etkinlikSuresi, int yasSiniri, String kapakFotografi, String etkinlikTurAdi, Long sinemaId) {
+    public EtkinlikForOrgDto(Long id, String etkinlikAdi, Timestamp olusturulmaTarihi, int etkinlikSuresi, int yasSiniri, String kapakFotografi, String etkinlikTurAdi, Long sinemaId, boolean tarihiGectiMi) {
         this.id = id;
         this.etkinlikAdi = etkinlikAdi;
         this.olusturulmaTarihi = olusturulmaTarihi;
@@ -25,6 +26,7 @@ public class EtkinlikForOrgDto {
         this.kapakFotografi = kapakFotografi;
         this.etkinlikTurAdi = etkinlikTurAdi;
         this.sinemaId = sinemaId;
+        this.tarihiGectiMi = tarihiGectiMi;
     }
 
     public EtkinlikForOrgDto() {
